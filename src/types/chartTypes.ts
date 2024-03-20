@@ -28,7 +28,8 @@ export type ChartTypeContext = {
   };
 export type ChartTheme = {
   pie: ChartTypeContext,
-  bar: ChartTypeContext
+  bar: ChartTypeContext,
+  histogram: ChartTypeContext
 };
 
 export type FilterCallback<T> = (value: T, index: number, array: T[]) => boolean;
@@ -76,9 +77,18 @@ export interface PieChartProps extends BaseCategoricalChartProps {
   maxLabelChars?: number;
 }
 
-export interface BarChartProps extends BaseCategoricalChartProps {
-  colorTheme?: keyof ChartTheme['bar'];
+export interface BaseBarChartProps extends BaseCategoricalChartProps {
+  chartFill: HexColor[];
+  otherFill: HexColor;
   title?: string;
   units: string;
   onClick?: BarProps['onClick'];
 }
+
+export interface BarChartProps extends Omit<BaseBarChartProps, 'chartFill' | 'otherFill'> {
+  colorTheme?: keyof ChartTheme['bar'];
+}
+export interface HistogramProps extends Omit<BaseBarChartProps, 'chartFill' | 'otherFill'> {
+  colorTheme?: keyof ChartTheme['bar'];
+}
+

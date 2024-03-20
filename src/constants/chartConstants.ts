@@ -42,6 +42,8 @@ export const COLORS: HexColor[] = [
   '#3B3EAC',
 ];
 
+export const NEW_CHART_COLORS: HexColor[] = ['#F94144', '#F3722C', '#F8961E', '#F9C74F', '#90BE6D', '#2D9CDB'];
+
 export const BAR_CHART_FILL = '#4575b4';
 export const CHART_MISSING_FILL = '#bbbbbb';
 
@@ -50,9 +52,23 @@ export const DEFAULT_CHART_THEME: ChartTheme = {
     default: {
       fill: COLORS,
       other: CHART_MISSING_FILL,
-  }
+    },
+    new: {
+      fill: NEW_CHART_COLORS,
+      other: CHART_MISSING_FILL,
+    },
   },
   bar: {
+    default: {
+      fill: [BAR_CHART_FILL],
+      other: CHART_MISSING_FILL,
+    },
+    new: {
+      fill: NEW_CHART_COLORS,
+      other: CHART_MISSING_FILL,
+    },
+  },
+  histogram: {
     default: {
       fill: [BAR_CHART_FILL],
       other: CHART_MISSING_FILL,

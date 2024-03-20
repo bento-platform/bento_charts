@@ -25,6 +25,7 @@ const TestBarChart: React.FC = () => {
           units="management units"
           height={sizeStateFixed.height}
           width={sizeStateFixed.width}
+          colorTheme="new"
         />
       </ResizableCard>
       <ResizableCard title="Responsive Bar Chart" sizeState={sizeStateResponsive} onSizeChange={setSizeStateResponsive}>
@@ -38,6 +39,7 @@ const TestBarChart: React.FC = () => {
           ]}
           units="management units"
           height={sizeStateResponsive.height}
+          colorTheme="new"
         />
       </ResizableCard>
     </Space>

@@ -11,6 +11,7 @@ import '../../src/styles.css';
 import { ChartConfigProvider } from '../../src';
 
 import TestBarChart from './TestBarChart';
+import TestHistogram from './TestHistogram';
 import TestChoroplethMap from './TestChoroplethMap';
 import TestPieChart from './TestPieChart';
 import TestPointMap from './TestPointMap';
@@ -19,31 +20,28 @@ const items: TabsProps['items'] = [
   {
     key: 'bar',
     label: 'Chart: Bar',
-    children: (
-      <TestBarChart />
-    ),
+    children: <TestBarChart />,
+  },
+  {
+    key: 'histogram',
+    label: 'Chart: Histogram',
+    children: <TestHistogram />,
   },
   {
     key: 'pie',
     label: 'Chart: Pie',
-    children: (
-      <TestPieChart />
-    ),
+    children: <TestPieChart />,
   },
   {
     key: 'choropleth',
     label: 'Map: Choropleth',
-    children: (
-      <TestChoroplethMap />
-    ),
+    children: <TestChoroplethMap />,
   },
   {
     key: 'points',
     label: 'Map: Points',
-    children: (
-      <TestPointMap />
-    ),
-  }
+    children: <TestPointMap />,
+  },
 ];
 
 const RoutedApp = () => {
@@ -52,7 +50,7 @@ const RoutedApp = () => {
 
   return (
     <Layout>
-      <Layout.Content style={{ padding: 24, height: "100vh" }}>
+      <Layout.Content style={{ padding: 24, height: '100vh' }}>
         <Card>
           <Typography.Title level={1}>Bento Charts Test App</Typography.Title>
           <Tabs items={items} activeKey={tab} onChange={(key) => navigate(`/${key}`)} />
@@ -60,7 +58,7 @@ const RoutedApp = () => {
       </Layout.Content>
     </Layout>
   );
-}
+};
 
 const BentoChartsTestApp = () => {
   return (
@@ -76,6 +74,4 @@ const BentoChartsTestApp = () => {
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-root.render(
-  <BentoChartsTestApp />
-);
+root.render(<BentoChartsTestApp />);
