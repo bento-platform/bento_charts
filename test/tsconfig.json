@@ -15,9 +15,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "declaration": true,
+    "declaration": true
   },
-  "include": [
-    "js/**/*"
-  ]
+  "include": ["js/**/*"]
 }

@@ -17,8 +17,8 @@ const config = {
         loader: 'ts-loader',
         exclude: /node_modules/,
         options: {
-          configFile: 'test/tsconfig.json'
-        }
+          configFile: 'test/tsconfig.json',
+        },
       },
       {
         test: /\.html$/i,

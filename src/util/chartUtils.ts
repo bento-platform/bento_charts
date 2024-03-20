@@ -18,7 +18,7 @@ export const useTransformedChartData = (
     removeEmpty: origRemoveEmpty,
   }: CategoricalChartDataWithTransforms,
   defaultRemoveEmpty = true,
-  sortY = false,
+  sortY = false
 ) =>
   useMemo(() => {
     const removeEmpty = origRemoveEmpty ?? defaultRemoveEmpty;

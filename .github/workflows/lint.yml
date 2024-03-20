@@ -5,6 +5,14 @@ on:
       - main
   pull_request:
 jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check code formatting
+        run: |
+          npm install
+          npx prettier --check .
   lint:
     runs-on: ubuntu-latest
     steps:

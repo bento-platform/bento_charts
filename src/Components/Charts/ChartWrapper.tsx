@@ -5,11 +5,11 @@ interface ChartWrapperProps {
   children: ReactNode;
 }
 
-const ChartWrapper = forwardRef(({children}: ChartWrapperProps, ref: ForwardedRef<HTMLDivElement>) => (
+const ChartWrapper = forwardRef(({ children }: ChartWrapperProps, ref: ForwardedRef<HTMLDivElement>) => (
   <div style={CHART_WRAPPER_STYLE} ref={ref}>
     {children}
   </div>
 ));
-ChartWrapper.displayName = "ChartWrapper";
+ChartWrapper.displayName = 'ChartWrapper';
 
 export default ChartWrapper;

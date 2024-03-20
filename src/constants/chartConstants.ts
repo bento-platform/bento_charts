@@ -50,7 +50,7 @@ export const DEFAULT_CHART_THEME: ChartTheme = {
     default: {
       fill: COLORS,
       other: CHART_MISSING_FILL,
-  }
+    },
   },
   bar: {
     default: {

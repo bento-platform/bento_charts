@@ -22,13 +22,13 @@ export type HexColor = `#${string}`;
 
 export type ChartThemeContext = { fill: HexColor[]; other: HexColor };
 export type ChartTypeContext = {
-    [key in string]: ChartThemeContext;
-  } & {
-    default: ChartThemeContext;
-  };
+  [key in string]: ChartThemeContext;
+} & {
+  default: ChartThemeContext;
+};
 export type ChartTheme = {
-  pie: ChartTypeContext,
-  bar: ChartTypeContext
+  pie: ChartTypeContext;
+  bar: ChartTypeContext;
 };
 
 export type FilterCallback<T> = (value: T, index: number, array: T[]) => boolean;
