@@ -1,4 +1,3 @@
-import React from 'react';
 import type { ControlPosition } from 'leaflet';
 import { controlPositionClasses } from './utils';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { ChoroplethMap } from '../../src/maps';
 import { TEST_HEATMAP_GEOJSON_FEATURES } from './testData';
 
@@ -6,11 +5,15 @@ const TestChoroplethMap = () => (
   <ChoroplethMap
     features={TEST_HEATMAP_GEOJSON_FEATURES}
     categoryProp="pop"
-    data={[{x: "AB", y: 50}, {x: "NB", y: 75}, {x: "SB", y: 60}]}
+    data={[
+      { x: 'AB', y: 50 },
+      { x: 'NB', y: 75 },
+      { x: 'SB', y: 60 },
+    ]}
     colorMode={{
-      mode: "continuous",
-      minColor: "rgba(122, 122, 255, 0.2)",
-      maxColor: "rgba(255, 122, 122, 0.5)",
+      mode: 'continuous',
+      minColor: 'rgba(122, 122, 255, 0.2)',
+      maxColor: 'rgba(255, 122, 122, 0.5)',
     }}
     onClick={(f) => {
       console.log(f);

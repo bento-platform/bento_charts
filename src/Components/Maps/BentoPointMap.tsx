@@ -1,4 +1,3 @@
-import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import BentoMapContainer from './BentoMapContainer';
 import type { PointMapProps } from '../../types/mapTypes';

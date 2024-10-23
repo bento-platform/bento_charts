@@ -1,4 +1,3 @@
-import React from 'react';
 import { PointMap } from '../../src/maps';
 import { TEST_HEATMAP_GEOJSON_FEATURES } from './testData';
 

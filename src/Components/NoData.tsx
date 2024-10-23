@@ -1,5 +1,3 @@
-import React from 'react';
-
 const NoData = ({ height }: NoDataProps) => {
   return (
     <div

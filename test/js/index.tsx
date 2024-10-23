@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Routes, Route, Navigate, BrowserRouter, useParams, useNavigate } from 'react-router-dom';
 

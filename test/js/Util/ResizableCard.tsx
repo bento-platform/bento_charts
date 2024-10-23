@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, Slider, Space } from 'antd';
 
 const ResizableCard: React.FC<ResizableCardProps> = ({ title, sizeState, onSizeChange, children }) => {

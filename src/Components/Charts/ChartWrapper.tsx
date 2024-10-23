@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, ReactNode } from 'react';
+import { ForwardedRef, forwardRef, ReactNode } from 'react';
 import { CHART_WRAPPER_STYLE } from '../../constants/chartConstants';
 
 interface ChartWrapperProps {

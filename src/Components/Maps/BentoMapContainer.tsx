@@ -1,4 +1,3 @@
-import React from 'react';
 import type { ReactNode } from 'react';
 import { MapContainer } from 'react-leaflet';
 import L, { Point } from 'leaflet';

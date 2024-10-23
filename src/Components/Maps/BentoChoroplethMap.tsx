@@ -1,4 +1,4 @@
-import React, { Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ReactNode, Ref, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GeoJSON, Popup } from 'react-leaflet';
 import { interpolateRgb } from 'd3-interpolate';
 import type { Feature as GeoJSONFeatureType } from 'geojson';
@@ -64,7 +64,7 @@ const BentoChoroplethMap = ({
     [calculateColor, categoryProp, dataByFeatureCat]
   );
 
-  const [popupContents, setPopupContents] = useState<React.ReactNode | null>(null);
+  const [popupContents, setPopupContents] = useState<ReactNode | null>(null);
 
   const eventHandlers = useMemo(
     () =>

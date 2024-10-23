@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 
 import { DEFAULT_CHART_THEME, defaultTranslationObject } from './constants/chartConstants';
@@ -18,7 +18,7 @@ const DEFAULT_CONTEXT: ChartContextType = {
   maxLabelChars: 14,
 };
 
-const ChartContext = React.createContext<ChartContextType>(DEFAULT_CONTEXT);
+const ChartContext = createContext<ChartContextType>(DEFAULT_CONTEXT);
 
 export function useChartTheme() {
   return useContext(ChartContext).theme;
@@ -48,7 +48,7 @@ const ChartConfigProvider = ({
   try {
     lang = Lng as SupportedLng;
   } catch (e) {
-    console.error('Lng is not a supported language');
+    console.error('Lng is not a supported language', e);
     return null;
   }
   const contextValue = {

@@ -1,11 +1,11 @@
-import React from 'react';
+import { useState } from 'react';
 import { Space } from 'antd';
 import { Histogram } from '../../src/index';
 import ResizableCard from './Util/ResizableCard';
 
-const TestBarChart: React.FC = () => {
-  const [sizeStateResponsive, setSizeStateResponsive] = React.useState({ width: 500, height: 500 });
-  const [sizeStateFixed, setSizeStateFixed] = React.useState({ width: 960, height: 600 });
+const TestBarChart = () => {
+  const [sizeStateResponsive, setSizeStateResponsive] = useState({ width: 500, height: 500 });
+  const [sizeStateFixed, setSizeStateFixed] = useState({ width: 960, height: 600 });
   return (
     <Space direction="vertical" size={150}>
       <ResizableCard title="Fixed Histogram" sizeState={sizeStateFixed} onSizeChange={setSizeStateFixed}>

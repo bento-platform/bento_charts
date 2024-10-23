@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   Bar,
   BarChart,
@@ -38,7 +38,7 @@ const tickFormatter = (tickLabel: string) => {
 
 const BAR_CHART_MARGINS = { top: 10, bottom: 100, right: 20 };
 
-const BaseBarChart: React.FC<BaseBarChartProps> = ({
+const BaseBarChart = ({
   height,
   width,
   units,
@@ -48,7 +48,7 @@ const BaseBarChart: React.FC<BaseBarChartProps> = ({
   chartFill,
   otherFill,
   ...params
-}) => {
+}: BaseBarChartProps) => {
   const t = useChartTranslation();
 
   const fill = (entry: CategoricalChartDataItem, index: number) =>
