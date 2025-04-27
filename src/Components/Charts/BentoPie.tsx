@@ -43,12 +43,14 @@ const labelShortName = (name: string, maxChars: number) => {
   return `${name.substring(0, maxChars - 3)}\u2026`;
 };
 
-// New helper function to extract the fill color logic
+const _entryFill = (entry: { name: string }, index: number, theme: string[]) =>
+  entry.name.toLowerCase() === 'missing' ? CHART_MISSING_FILL : theme[index % theme.length];
+
 const getPieSegmentFill = (entry: { name: string }, index: number, data: Array<{ name: string }>, theme: string[]) => {
-  let fill = entry.name.toLowerCase() === 'missing' ? CHART_MISSING_FILL : theme[index % theme.length];
+  let fill = _entryFill(entry, index, theme);
   if (index === data.length - 1 && entry.name.toLowerCase() !== 'missing') {
     const firstEntry = data[0];
-    const firstFill = firstEntry.name.toLowerCase() === 'missing' ? CHART_MISSING_FILL : theme[0];
+    const firstFill = _entryFill(firstEntry, 0, theme);
     if (fill === firstFill) {
       fill = theme[(index + 1) % theme.length];
     }
