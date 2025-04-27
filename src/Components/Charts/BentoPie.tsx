@@ -46,6 +46,7 @@ const labelShortName = (name: string, maxChars: number) => {
 const _entryFill = (entry: { name: string }, index: number, theme: string[]) =>
   entry.name.toLowerCase() === 'missing' ? CHART_MISSING_FILL : theme[index % theme.length];
 
+// Prevents the last segment from having the same fill as the first segment (unless "missing") to ensure visual distinction.
 const getPieSegmentFill = (entry: { name: string }, index: number, data: Array<{ name: string }>, theme: string[]) => {
   let fill = _entryFill(entry, index, theme);
   if (index === data.length - 1 && entry.name.toLowerCase() !== 'missing') {
