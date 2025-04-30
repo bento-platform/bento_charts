@@ -43,6 +43,22 @@ const labelShortName = (name: string, maxChars: number) => {
   return `${name.substring(0, maxChars - 3)}\u2026`;
 };
 
+const _entryFill = (entry: { name: string }, index: number, theme: string[]) =>
+  entry.name.toLowerCase() === 'missing' ? CHART_MISSING_FILL : theme[index % theme.length];
+
+// Prevents the last segment from having the same fill as the first segment (unless "missing") to ensure visual distinction.
+const getPieSegmentFill = (entry: { name: string }, index: number, data: Array<{ name: string }>, theme: string[]) => {
+  let fill = _entryFill(entry, index, theme);
+  if (index === data.length - 1 && entry.name.toLowerCase() !== 'missing') {
+    const firstEntry = data[0];
+    const firstFill = _entryFill(firstEntry, 0, theme);
+    if (fill === firstFill) {
+      fill = theme[(index + 1) % theme.length];
+    }
+  }
+  return fill;
+};
+
 const BentoPie = ({
   height,
   width,
@@ -133,10 +149,9 @@ const BentoPie = ({
             activeShape={RenderActiveLabel}
             onClick={onClick}
           >
-            {data.map((entry, index) => {
-              const fill = entry.name.toLowerCase() === 'missing' ? CHART_MISSING_FILL : theme[index % theme.length];
-              return <Cell key={index} fill={fill} />;
-            })}
+            {data.map((entry, index) => (
+              <Cell key={index} fill={getPieSegmentFill(entry, index, data, theme)} />
+            ))}
           </Pie>
           <Tooltip {...TOOLTIP_OTHER_PROPS} content={<CustomTooltip totalCount={sum} />} isAnimationActive={false} />
         </PieChart>
