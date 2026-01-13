@@ -1,5 +1,5 @@
 import type { PieProps, BarProps } from 'recharts';
-import type { BarChartProps as RechartsBarChartProps } from 'recharts/index.d.ts';
+import type { CartesianChartProps } from 'recharts/types/util/types';
 import { COUNT_KEY, OTHER_KEY } from '../constants/chartConstants';
 
 export type CategoricalChartDataType = CategoricalChartDataItem[];
@@ -66,7 +66,7 @@ export interface BaseChartComponentProps {
   height: number;
   // Width is useful to have, to force re-render / force a specific width, but it is optional.
   // Otherwise, it will be set to 100%.
-  width?: number | string;
+  width?: number | `${number}%`;
 }
 
 export interface BaseCategoricalChartProps extends BaseChartComponentProps, CategoricalChartDataWithTransforms {}
@@ -85,7 +85,7 @@ export interface BaseBarChartProps extends BaseCategoricalChartProps {
   title?: string;
   units: string;
   onClick?: BarProps['onClick'];
-  onChartClick?: RechartsBarChartProps['onClick'];
+  onChartClick?: CartesianChartProps['onClick'];
 }
 
 export interface BarChartProps extends Omit<BaseBarChartProps, 'chartFill' | 'otherFill'> {
