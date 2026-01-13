@@ -1,11 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   Bar,
   BarChart,
-  BarProps,
+  type BarProps,
   CartesianGrid,
   Cell,
   Label,
+  type LabelProps,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -36,7 +37,9 @@ const tickFormatter = (tickLabel: string) => {
   return `${tickLabel.substring(0, MAX_TICK_LABEL_CHARS)}...`;
 };
 
-const BAR_CHART_MARGINS = { top: 10, bottom: 100, right: 20 };
+const BAR_CHART_MARGINS = { bottom: 100, right: 0 };
+const BAR_CHART_MARGIN_TOP_COUNTS = 34;
+const BAR_CHART_MARGIN_TOP_NO_COUNTS = 10;
 
 const BaseBarChart = ({
   height,
@@ -47,9 +50,21 @@ const BaseBarChart = ({
   onChartClick,
   chartFill,
   otherFill,
+  showBarCounts,
   ...params
 }: BaseBarChartProps) => {
+  showBarCounts = showBarCounts ?? true; // Show bar counts by default
+
   const t = useChartTranslation();
+
+  const margins = useMemo(
+    () => ({
+      ...BAR_CHART_MARGINS,
+      // Top margin needs to accommodate bar count labels:
+      top: showBarCounts ? BAR_CHART_MARGIN_TOP_COUNTS : BAR_CHART_MARGIN_TOP_NO_COUNTS,
+    }),
+    [showBarCounts]
+  );
 
   const fill = (entry: CategoricalChartDataItem, index: number) =>
     entry.x === 'missing' ? otherFill : chartFill[index % chartFill.length];
@@ -79,7 +94,7 @@ const BaseBarChart = ({
     <ChartWrapper responsive={typeof width !== 'number'}>
       <div style={TITLE_STYLE}>{title}</div>
       <ResponsiveContainer width={width ?? '100%'} height={height}>
-        <BarChart data={data} margin={BAR_CHART_MARGINS} onClick={onChartClick}>
+        <BarChart data={data} margin={margins} onClick={onChartClick}>
           <XAxis
             dataKey="x"
             height={20}
@@ -97,7 +112,14 @@ const BaseBarChart = ({
           </YAxis>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <Tooltip content={<BarTooltip totalCount={totalCount} />} />
-          <Bar dataKey="y" isAnimationActive={false} onClick={onClick} onMouseEnter={onHover} maxBarSize={70}>
+          <Bar
+            dataKey="y"
+            isAnimationActive={false}
+            onClick={onClick}
+            onMouseEnter={onHover}
+            maxBarSize={70}
+            label={showBarCounts ? BarLabel : undefined}
+          >
             {data.map((entry, index) => (
               <Cell key={entry.x} fill={fill(entry, index)} />
             ))}
@@ -132,6 +154,35 @@ const BarTooltip = ({
         {value} ({percentage}%)
       </p>
     </div>
+  );
+};
+
+/**
+ * Component for rendering bar counts directly above bars in the plot.
+ */
+const BarLabel = ({ x, y, width, value, fill }: LabelProps) => {
+  width = width ?? 0;
+
+  // Flip the labels to vertical text when the bar width is (roughly) less than the text width
+  // noinspection SuspiciousTypeOfGuard
+  const vertical = typeof width === 'number' ? width < (value ?? '').toString().length * 9.25 : false;
+  // noinspection SuspiciousTypeOfGuard
+  const xPos = typeof x === 'number' && typeof width === 'number' ? x + width / 2 : x;
+
+  return (
+    <g transform={`translate(${xPos}, ${y})`}>
+      <text
+        textAnchor={vertical ? 'start' : 'middle'}
+        transform={vertical ? 'rotate(-90)' : undefined}
+        letterSpacing={vertical ? -1 : undefined}
+        dy={vertical ? 4 : -6}
+        dx={vertical ? 3 : 0}
+        fill={fill}
+      >
+        {/* Hide 0-count values to avoid a bunch of "0" spam in histograms with empty bars */}
+        {value === 0 ? '' : value}
+      </text>
+    </g>
   );
 };
 

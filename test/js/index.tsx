@@ -49,9 +49,11 @@ const RoutedApp = () => {
 
   return (
     <Layout>
-      <Layout.Content style={{ padding: 24, height: '100vh' }}>
+      <Layout.Content style={{ padding: 24, height: '100vh', overflow: 'auto' }}>
         <Card>
-          <Typography.Title level={1}>Bento Charts Test App</Typography.Title>
+          <Typography.Title level={1} style={{ marginTop: 0 }}>
+            Bento Charts Test App
+          </Typography.Title>
           <Tabs items={items} activeKey={tab} onChange={(key) => navigate(`/${key}`)} />
         </Card>
       </Layout.Content>

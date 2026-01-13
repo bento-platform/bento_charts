@@ -86,6 +86,7 @@ export interface BaseBarChartProps extends BaseCategoricalChartProps {
   units: string;
   onClick?: BarProps['onClick'];
   onChartClick?: RechartsBarChartProps['onClick'];
+  showBarCounts?: boolean;
 }
 
 export interface BarChartProps extends Omit<BaseBarChartProps, 'chartFill' | 'otherFill'> {
