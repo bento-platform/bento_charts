@@ -38,8 +38,11 @@ const tickFormatter = (tickLabel: string) => {
 };
 
 const BAR_CHART_MARGINS = { bottom: 100, right: 0 };
-const BAR_CHART_MARGIN_TOP_COUNTS = 34;
+const BAR_CHART_MARGIN_TOP_COUNTS = 35;
 const BAR_CHART_MARGIN_TOP_NO_COUNTS = 10;
+const MIN_BAR_WIDTH_FOR_COUNTS = 11;
+const BAR_LABEL_SPACING = 4; // Spacing of a BarLabel above the actual bar, in pixels.
+const BAR_LABEL_APPROX_NUMBER_WIDTH = 9.2;
 
 const BaseBarChart = ({
   height,
@@ -161,13 +164,16 @@ const BarTooltip = ({
  * Component for rendering bar counts directly above bars in the plot.
  */
 const BarLabel = ({ x, y, width, value, fill }: LabelProps) => {
-  width = width ?? 0;
+  // Funky conversion to placate TypeScript. In reality, width should always be a number here, the Recharts types are
+  // just incorrect or something.
+  // noinspection SuspiciousTypeOfGuard
+  const finalWidth = typeof width === 'string' ? MIN_BAR_WIDTH_FOR_COUNTS : (width ?? 0);
 
   // Flip the labels to vertical text when the bar width is (roughly) less than the text width
   // noinspection SuspiciousTypeOfGuard
-  const vertical = typeof width === 'number' ? width < (value ?? '').toString().length * 9.25 : false;
+  const vertical = finalWidth < (value ?? '').toString().length * BAR_LABEL_APPROX_NUMBER_WIDTH;
   // noinspection SuspiciousTypeOfGuard
-  const xPos = typeof x === 'number' && typeof width === 'number' ? x + width / 2 : x;
+  const xPos = typeof x === 'number' ? x + finalWidth / 2 : x;
 
   return (
     <g transform={`translate(${xPos}, ${y})`}>
@@ -175,12 +181,12 @@ const BarLabel = ({ x, y, width, value, fill }: LabelProps) => {
         textAnchor={vertical ? 'start' : 'middle'}
         transform={vertical ? 'rotate(-90)' : undefined}
         letterSpacing={vertical ? -1 : undefined}
-        dy={vertical ? 4 : -6}
-        dx={vertical ? 3 : 0}
+        dy={vertical ? 0 : -1 * BAR_LABEL_SPACING}
+        dx={vertical ? BAR_LABEL_SPACING : 0}
         fill={fill}
       >
         {/* Hide 0-count values to avoid a bunch of "0" spam in histograms with empty bars */}
-        {value === 0 ? '' : value}
+        {finalWidth < MIN_BAR_WIDTH_FOR_COUNTS || value === 0 ? '' : value}
       </text>
     </g>
   );
