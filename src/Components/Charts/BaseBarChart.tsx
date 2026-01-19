@@ -178,9 +178,10 @@ const BarLabel = ({ x, y, width, value, fill }: LabelProps) => {
   return (
     <g transform={`translate(${xPos}, ${y})`}>
       <text
-        textAnchor={vertical ? 'start' : 'middle'}
-        transform={vertical ? 'rotate(-90)' : undefined}
-        letterSpacing={vertical ? -1 : undefined}
+        textAnchor={vertical ? 'start' : 'middle'} // Anchor the start coordinate of the text at the start in vert. mode
+        dominantBaseline={vertical ? 'central' : undefined} // In vertical text mode, center the text over the bar
+        transform={vertical ? 'rotate(-90)' : undefined} // Make text vertical for narrow bars
+        letterSpacing={vertical ? -1 : undefined} // Compress text slightly in vertical mode, to better fit in margin
         dy={vertical ? 0 : -1 * BAR_LABEL_SPACING}
         dx={vertical ? BAR_LABEL_SPACING : 0}
         fill={fill}
