@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 import {
   Bar,
   BarChart,
@@ -24,7 +24,7 @@ import {
   COUNT_KEY,
 } from '../../constants/chartConstants';
 
-import type { BaseBarChartProps, CategoricalChartDataItem, TooltipPayload } from '../../types/chartTypes';
+import { BarCountFillMode, BaseBarChartProps, CategoricalChartDataItem, TooltipPayload } from '../../types/chartTypes';
 import { useChartTranslation } from '../../ChartConfigProvider';
 import NoData from '../NoData';
 import { useTransformedChartData } from '../../util/chartUtils';
@@ -54,6 +54,7 @@ const BaseBarChart = ({
   chartFill,
   otherFill,
   showBarCounts,
+  barCountFillMode,
   ...params
 }: BaseBarChartProps) => {
   showBarCounts = showBarCounts ?? true; // Show bar counts by default
@@ -94,42 +95,44 @@ const BaseBarChart = ({
   //  on formatting a non-string. This hack manually overrides the ticks for the axis and blanks it out.
   //    - David L, 2023-01-03
   return (
-    <ChartWrapper responsive={typeof width !== 'number'}>
-      <div style={TITLE_STYLE}>{title}</div>
-      <ResponsiveContainer width={width ?? '100%'} height={height}>
-        <BarChart data={data} margin={margins} onClick={onChartClick}>
-          <XAxis
-            dataKey="x"
-            height={20}
-            angle={-45}
-            ticks={data.length ? undefined : ['']}
-            tickFormatter={tickFormatter}
-            tickMargin={TICK_MARGIN}
-            textAnchor="end"
-            interval={data.length < TICKS_SHOW_ALL_LABELS_BELOW ? 0 : 'preserveStartEnd'}
-          >
-            <Label value={units} offset={UNITS_LABEL_OFFSET} position="insideBottom" />
-          </XAxis>
-          <YAxis>
-            <Label value={t[COUNT_KEY]} offset={-10} position="left" angle={270} />
-          </YAxis>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <Tooltip content={<BarTooltip totalCount={totalCount} />} />
-          <Bar
-            dataKey="y"
-            isAnimationActive={false}
-            onClick={onClick}
-            onMouseEnter={onHover}
-            maxBarSize={70}
-            label={showBarCounts ? BarLabel : undefined}
-          >
-            {data.map((entry, index) => (
-              <Cell key={entry.x} fill={fill(entry, index)} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </ChartWrapper>
+    <BarLabelContext.Provider value={{ barCountFillMode: barCountFillMode ?? 'neutral' }}>
+      <ChartWrapper responsive={typeof width !== 'number'}>
+        <div style={TITLE_STYLE}>{title}</div>
+        <ResponsiveContainer width={width ?? '100%'} height={height}>
+          <BarChart data={data} margin={margins} onClick={onChartClick} barCategoryGap={1.5}>
+            <XAxis
+              dataKey="x"
+              height={20}
+              angle={-45}
+              ticks={data.length ? undefined : ['']}
+              tickFormatter={tickFormatter}
+              tickMargin={TICK_MARGIN}
+              textAnchor="end"
+              interval={data.length < TICKS_SHOW_ALL_LABELS_BELOW ? 0 : 'preserveStartEnd'}
+            >
+              <Label value={units} offset={UNITS_LABEL_OFFSET} position="insideBottom" />
+            </XAxis>
+            <YAxis>
+              <Label value={t[COUNT_KEY]} offset={-10} position="left" angle={270} />
+            </YAxis>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <Tooltip content={<BarTooltip totalCount={totalCount} />} />
+            <Bar
+              dataKey="y"
+              isAnimationActive={false}
+              onClick={onClick}
+              onMouseEnter={onHover}
+              // maxBarSize={70}
+              label={showBarCounts ? BarLabel : undefined}
+            >
+              {data.map((entry, index) => (
+                <Cell key={entry.x} fill={fill(entry, index)} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartWrapper>
+    </BarLabelContext.Provider>
   );
 };
 
@@ -160,10 +163,14 @@ const BarTooltip = ({
   );
 };
 
+const BarLabelContext = createContext<{ barCountFillMode: BarCountFillMode }>({ barCountFillMode: 'neutral' });
+
 /**
  * Component for rendering bar counts directly above bars in the plot.
  */
 const BarLabel = ({ x, y, width, value, fill }: LabelProps) => {
+  const { barCountFillMode } = useContext(BarLabelContext);
+
   // Funky conversion to placate TypeScript. In reality, width should always be a number here, the Recharts types are
   // just incorrect or something.
   // noinspection SuspiciousTypeOfGuard
@@ -184,7 +191,7 @@ const BarLabel = ({ x, y, width, value, fill }: LabelProps) => {
         letterSpacing={vertical ? -1 : undefined} // Compress text slightly in vertical mode, to better fit in margin
         dy={vertical ? 0 : -1 * BAR_LABEL_SPACING}
         dx={vertical ? BAR_LABEL_SPACING : 0}
-        fill={fill}
+        fill={barCountFillMode === 'neutral' ? '#666666' : fill}
       >
         {/* Hide 0-count values to avoid a bunch of "0" spam in histograms with empty bars */}
         {finalWidth < MIN_BAR_WIDTH_FOR_COUNTS || value === 0 ? '' : value}
