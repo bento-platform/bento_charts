@@ -1,11 +1,12 @@
-import { useCallback } from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 import {
   Bar,
   BarChart,
-  BarProps,
+  type BarProps,
   CartesianGrid,
   Cell,
   Label,
+  type LabelProps,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -23,7 +24,7 @@ import {
   COUNT_KEY,
 } from '../../constants/chartConstants';
 
-import type { BaseBarChartProps, CategoricalChartDataItem, TooltipPayload } from '../../types/chartTypes';
+import { BarCountFillMode, BaseBarChartProps, CategoricalChartDataItem, TooltipPayload } from '../../types/chartTypes';
 import { useChartTranslation } from '../../ChartConfigProvider';
 import NoData from '../NoData';
 import { useTransformedChartData } from '../../util/chartUtils';
@@ -36,7 +37,12 @@ const tickFormatter = (tickLabel: string) => {
   return `${tickLabel.substring(0, MAX_TICK_LABEL_CHARS)}...`;
 };
 
-const BAR_CHART_MARGINS = { top: 10, bottom: 100, right: 20 };
+const BAR_CHART_MARGINS = { bottom: 100, right: 0 };
+const BAR_CHART_MARGIN_TOP_COUNTS = 35;
+const BAR_CHART_MARGIN_TOP_NO_COUNTS = 10;
+const MIN_BAR_WIDTH_FOR_COUNTS = 11;
+const BAR_LABEL_SPACING = 4; // Spacing of a BarLabel above the actual bar, in pixels.
+const BAR_LABEL_APPROX_NUMBER_WIDTH = 9.2;
 
 const BaseBarChart = ({
   height,
@@ -47,9 +53,22 @@ const BaseBarChart = ({
   onChartClick,
   chartFill,
   otherFill,
+  showBarCounts,
+  barCountFillMode,
   ...params
 }: BaseBarChartProps) => {
+  showBarCounts = showBarCounts ?? true; // Show bar counts by default
+
   const t = useChartTranslation();
+
+  const margins = useMemo(
+    () => ({
+      ...BAR_CHART_MARGINS,
+      // Top margin needs to accommodate bar count labels:
+      top: showBarCounts ? BAR_CHART_MARGIN_TOP_COUNTS : BAR_CHART_MARGIN_TOP_NO_COUNTS,
+    }),
+    [showBarCounts]
+  );
 
   const fill = (entry: CategoricalChartDataItem, index: number) =>
     entry.x === 'missing' ? otherFill : chartFill[index % chartFill.length];
@@ -76,35 +95,44 @@ const BaseBarChart = ({
   //  on formatting a non-string. This hack manually overrides the ticks for the axis and blanks it out.
   //    - David L, 2023-01-03
   return (
-    <ChartWrapper responsive={typeof width !== 'number'}>
-      <div style={TITLE_STYLE}>{title}</div>
-      <ResponsiveContainer width={width ?? '100%'} height={height}>
-        <BarChart data={data} margin={BAR_CHART_MARGINS} onClick={onChartClick}>
-          <XAxis
-            dataKey="x"
-            height={20}
-            angle={-45}
-            ticks={data.length ? undefined : ['']}
-            tickFormatter={tickFormatter}
-            tickMargin={TICK_MARGIN}
-            textAnchor="end"
-            interval={data.length < TICKS_SHOW_ALL_LABELS_BELOW ? 0 : 'preserveStartEnd'}
-          >
-            <Label value={units} offset={UNITS_LABEL_OFFSET} position="insideBottom" />
-          </XAxis>
-          <YAxis>
-            <Label value={t[COUNT_KEY]} offset={-10} position="left" angle={270} />
-          </YAxis>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <Tooltip content={<BarTooltip totalCount={totalCount} />} />
-          <Bar dataKey="y" isAnimationActive={false} onClick={onClick} onMouseEnter={onHover} maxBarSize={70}>
-            {data.map((entry, index) => (
-              <Cell key={entry.x} fill={fill(entry, index)} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </ChartWrapper>
+    <BarLabelContext.Provider value={{ barCountFillMode: barCountFillMode ?? 'neutral' }}>
+      <ChartWrapper responsive={typeof width !== 'number'}>
+        <div style={TITLE_STYLE}>{title}</div>
+        <ResponsiveContainer width={width ?? '100%'} height={height}>
+          <BarChart data={data} margin={margins} onClick={onChartClick} barCategoryGap={1.5}>
+            <XAxis
+              dataKey="x"
+              height={20}
+              angle={-45}
+              ticks={data.length ? undefined : ['']}
+              tickFormatter={tickFormatter}
+              tickMargin={TICK_MARGIN}
+              textAnchor="end"
+              interval={data.length < TICKS_SHOW_ALL_LABELS_BELOW ? 0 : 'preserveStartEnd'}
+            >
+              <Label value={units} offset={UNITS_LABEL_OFFSET} position="insideBottom" />
+            </XAxis>
+            <YAxis>
+              <Label value={t[COUNT_KEY]} offset={-10} position="left" angle={270} />
+            </YAxis>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <Tooltip content={<BarTooltip totalCount={totalCount} />} />
+            <Bar
+              dataKey="y"
+              isAnimationActive={false}
+              onClick={onClick}
+              onMouseEnter={onHover}
+              // maxBarSize={70}
+              label={showBarCounts ? BarLabel : undefined}
+            >
+              {data.map((entry, index) => (
+                <Cell key={entry.x} fill={fill(entry, index)} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartWrapper>
+    </BarLabelContext.Provider>
   );
 };
 
@@ -132,6 +160,43 @@ const BarTooltip = ({
         {value} ({percentage}%)
       </p>
     </div>
+  );
+};
+
+const BarLabelContext = createContext<{ barCountFillMode: BarCountFillMode }>({ barCountFillMode: 'neutral' });
+
+/**
+ * Component for rendering bar counts directly above bars in the plot.
+ */
+const BarLabel = ({ x, y, width, value, fill }: LabelProps) => {
+  const { barCountFillMode } = useContext(BarLabelContext);
+
+  // Funky conversion to placate TypeScript. In reality, width should always be a number here, the Recharts types are
+  // just incorrect or something.
+  // noinspection SuspiciousTypeOfGuard
+  const finalWidth = typeof width === 'string' ? MIN_BAR_WIDTH_FOR_COUNTS : (width ?? 0);
+
+  // Flip the labels to vertical text when the bar width is (roughly) less than the text width
+  // noinspection SuspiciousTypeOfGuard
+  const vertical = finalWidth < (value ?? '').toString().length * BAR_LABEL_APPROX_NUMBER_WIDTH;
+  // noinspection SuspiciousTypeOfGuard
+  const xPos = typeof x === 'number' ? x + finalWidth / 2 : x;
+
+  return (
+    <g transform={`translate(${xPos}, ${y})`}>
+      <text
+        textAnchor={vertical ? 'start' : 'middle'} // Anchor the start coordinate of the text at the start in vert. mode
+        dominantBaseline={vertical ? 'central' : undefined} // In vertical text mode, center the text over the bar
+        transform={vertical ? 'rotate(-90)' : undefined} // Make text vertical for narrow bars
+        letterSpacing={vertical ? -1 : undefined} // Compress text slightly in vertical mode, to better fit in margin
+        dy={vertical ? 0 : -1 * BAR_LABEL_SPACING}
+        dx={vertical ? BAR_LABEL_SPACING : 0}
+        fill={barCountFillMode === 'neutral' ? '#666666' : fill}
+      >
+        {/* Hide 0-count values to avoid a bunch of "0" spam in histograms with empty bars */}
+        {finalWidth < MIN_BAR_WIDTH_FOR_COUNTS || value === 0 ? '' : value}
+      </text>
+    </g>
   );
 };
 

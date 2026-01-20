@@ -79,6 +79,8 @@ export interface PieChartProps extends BaseCategoricalChartProps {
   maxLabelChars?: number;
 }
 
+export type BarCountFillMode = 'match' | 'neutral';
+
 export interface BaseBarChartProps extends BaseCategoricalChartProps {
   chartFill: HexColor[];
   otherFill: HexColor;
@@ -86,6 +88,8 @@ export interface BaseBarChartProps extends BaseCategoricalChartProps {
   units: string;
   onClick?: BarProps['onClick'];
   onChartClick?: RechartsBarChartProps['onClick'];
+  showBarCounts?: boolean;
+  barCountFillMode?: BarCountFillMode; // Whether the bar count text fill should match the bar color, or be neutral.
 }
 
 export interface BarChartProps extends Omit<BaseBarChartProps, 'chartFill' | 'otherFill'> {
