@@ -1,6 +1,7 @@
-import { Card, Slider, Space } from 'antd';
+import type { ReactNode } from 'react';
+import { Card, Flex, Slider, Space } from 'antd';
 
-const ResizableCard: React.FC<ResizableCardProps> = ({ title, sizeState, onSizeChange, children }) => {
+const ResizableCard = ({ title, sizeState, onSizeChange, children }: ResizableCardProps) => {
   const onChangeWidth = (value: number) => {
     onSizeChange({ width: value, height: sizeState.height });
   };
@@ -11,10 +12,16 @@ const ResizableCard: React.FC<ResizableCardProps> = ({ title, sizeState, onSizeC
 
   return (
     <Space direction="vertical">
-      <div style={{ width: '500px' }}>
-        <Slider min={50} max={800} onChange={onChangeWidth} value={sizeState.width + 50} />
-        <Slider min={50} max={800} onChange={onChangeHeight} value={sizeState.height + 50} />
-      </div>
+      <Flex vertical={true} style={{ width: 500 }}>
+        <Flex align="center">
+          <label style={{ width: 60 }}>Width:</label>
+          <Slider min={50} max={800} onChange={onChangeWidth} value={sizeState.width + 50} style={{ flex: 1 }} />
+        </Flex>
+        <Flex align="center">
+          <label style={{ width: 60 }}>Height:</label>
+          <Slider min={50} max={800} onChange={onChangeHeight} value={sizeState.height + 50} style={{ flex: 1 }} />
+        </Flex>
+      </Flex>
       <Card title={title} style={sizeState}>
         {children}
       </Card>
@@ -26,7 +33,7 @@ interface ResizableCardProps {
   title: string;
   sizeState: { width: number; height: number };
   onSizeChange: (size: { width: number; height: number }) => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export default ResizableCard;
