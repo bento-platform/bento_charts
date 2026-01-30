@@ -99,7 +99,7 @@ const BaseBarChart = ({
       <ChartWrapper responsive={typeof width !== 'number'}>
         <div style={TITLE_STYLE}>{title}</div>
         <ResponsiveContainer width={width ?? '100%'} height={height}>
-          <BarChart data={data} margin={margins} onClick={onChartClick} barCategoryGap={1.5}>
+          <BarChart data={data} margin={margins} onClick={onChartClick}>
             <XAxis
               dataKey="x"
               height={20}
@@ -122,7 +122,7 @@ const BaseBarChart = ({
               isAnimationActive={false}
               onClick={onClick}
               onMouseEnter={onHover}
-              // maxBarSize={70}
+              maxBarSize={70}
               label={showBarCounts ? BarLabel : undefined}
             >
               {data.map((entry, index) => (
