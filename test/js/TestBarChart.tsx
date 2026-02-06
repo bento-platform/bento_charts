@@ -17,7 +17,7 @@ const TestBarChart = () => {
         <ResizableCard title="Fixed Bar Chart" sizeState={sizeStateFixed} onSizeChange={setSizeStateFixed}>
           <BarChart
             data={[
-              { id: '0', x: 'AB', y: 50 },
+              { id: '0', x: 'AB', y: 50, yDelta: [50, 60] },
               { id: '1', x: 'NB', y: 75 },
               { id: '2', x: 'SB', y: 60 },
               { id: '3', x: 'AU', y: 30 },

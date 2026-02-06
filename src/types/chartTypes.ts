@@ -7,6 +7,7 @@ export type CategoricalChartDataType = CategoricalChartDataItem[];
 export interface CategoricalChartDataItem {
   x: string;
   y: number;
+  yDelta?: [number, number];
   id?: string;
 }
 

@@ -1,7 +1,9 @@
 import { createContext, useCallback, useContext, useMemo } from 'react';
+import { color as d3color } from 'd3-color';
 import {
   Bar,
   BarChart,
+  ComposedChart,
   type BarProps,
   CartesianGrid,
   Cell,
@@ -70,8 +72,17 @@ const BaseBarChart = ({
     [showBarCounts]
   );
 
-  const fill = (entry: CategoricalChartDataItem, index: number) =>
-    entry.x === 'missing' ? otherFill : chartFill[index % chartFill.length];
+  const fill = (entry: CategoricalChartDataItem, index: number, opacity?: number) => {
+    const color = entry.x === 'missing' ? otherFill : chartFill[index % chartFill.length];
+    if (opacity !== undefined) {
+      const colorObj = d3color(color);
+      if (!colorObj) return color;
+      colorObj.opacity = opacity;
+      return colorObj.formatRgb();
+    } else {
+      return color;
+    }
+  };
 
   const data = useTransformedChartData(params, true);
 
@@ -99,7 +110,7 @@ const BaseBarChart = ({
       <ChartWrapper responsive={typeof width !== 'number'}>
         <div style={TITLE_STYLE}>{title}</div>
         <ResponsiveContainer width={width ?? '100%'} height={height}>
-          <BarChart data={data} margin={margins} onClick={onChartClick}>
+          <ComposedChart data={data} margin={margins} onClick={onChartClick}>
             <XAxis
               dataKey="x"
               height={20}
@@ -118,19 +129,29 @@ const BaseBarChart = ({
             </YAxis>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <Tooltip content={<BarTooltip totalCount={totalCount} />} />
+            <Bar dataKey="yDelta" stackId="stack" isAnimationActive={false} maxBarSize={70}>
+              {data.map((entry, index) => (
+                <Cell key={entry.x} fill={fill(entry, index, 0.15)} />
+              ))}
+            </Bar>
             <Bar
               dataKey="y"
+              stackId="stack"
               isAnimationActive={false}
               onClick={onClick}
               onMouseEnter={onHover}
               maxBarSize={70}
+              // background={(props) => {
+              //   console.log(props);
+              //   return <rect x={props.x} y={props.y} width={props.width} height={props.height} fill="#DDDDDD" />;
+              // }}
               label={showBarCounts ? BarLabel : undefined}
             >
               {data.map((entry, index) => (
                 <Cell key={entry.x} fill={fill(entry, index)} />
               ))}
             </Bar>
-          </BarChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </ChartWrapper>
     </BarLabelContext.Provider>
