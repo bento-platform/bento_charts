@@ -107,6 +107,7 @@ const BaseBarChart = ({
               ticks={data.length ? undefined : ['']}
               tickFormatter={tickFormatter}
               tickMargin={TICK_MARGIN}
+              tick={{ textAnchor: 'end' }}
               textAnchor="end"
               interval={data.length < TICKS_SHOW_ALL_LABELS_BELOW ? 0 : 'preserveStartEnd'}
             >
