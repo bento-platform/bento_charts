@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   PieChart,
   Pie,
@@ -78,8 +78,6 @@ const BentoPie = ({
   const resolvedChartThreshold = chartThreshold ?? defaultChartThreshold;
   const resolvedMaxLabelChars = maxLabelChars ?? defaultMaxLabelChars;
 
-  const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
-
   // ##################### Data processing #####################
 
   const transformedData = useTransformedChartData(params, true, sort);
@@ -108,10 +106,6 @@ const BentoPie = ({
   }, [t, transformedData, resolvedChartThreshold]);
 
   // ##################### Rendering #####################
-  const onEnter: PieProps['onMouseEnter'] = useCallback((_data, index) => {
-    setActiveIndex(index);
-  }, []);
-
   const onHover: PieProps['onMouseOver'] = useCallback(
     (data, _index, e) => {
       const { target } = e;
@@ -119,10 +113,6 @@ const BentoPie = ({
     },
     [t, onClick]
   );
-
-  const onLeave: PieProps['onMouseLeave'] = useCallback(() => {
-    setActiveIndex(undefined);
-  }, []);
 
   if (data.length === 0) {
     return <NoData height={height} />;
@@ -142,11 +132,8 @@ const BentoPie = ({
             label={renderLabel(resolvedMaxLabelChars)}
             labelLine={false}
             isAnimationActive={false}
-            onMouseEnter={onEnter}
-            onMouseLeave={onLeave}
             onMouseOver={onHover}
-            activeIndex={activeIndex}
-            activeShape={RenderActiveLabel}
+            shape={PieChartShape}
             onClick={onClick}
           >
             {data.map((entry, index) => (
@@ -171,14 +158,12 @@ const toNumber = (val: number | string | undefined, defaultValue?: number): numb
 
 const renderLabel = (resolvedMaxLabelChars: number): PieProps['label'] => {
   const BentoPieLabel = (params: PieLabelRenderProps) => {
-    const { fill, payload, index, activeIndex } = params;
-    const percent = params.percent || 0;
-    const midAngle = params.midAngle || 0;
+    const { fill, payload } = params;
+    const percent: number = params.percent || 0;
+    const midAngle: number = params.midAngle || 0;
 
-    // skip rendering this static label if the sector is selected.
-    // this will let the 'renderActiveState' draw without overlapping.
-    // also, skip rendering if segment is too small a percentage (avoids label clutter)
-    if (index === activeIndex || percent < LABEL_THRESHOLD) {
+    // skip rendering if segment is too small a percentage (avoids label clutter)
+    if (percent < LABEL_THRESHOLD) {
       return;
     }
 
@@ -232,10 +217,9 @@ const renderLabel = (resolvedMaxLabelChars: number): PieProps['label'] => {
   return BentoPieLabel;
 };
 
-const RenderActiveLabel: PieProps['activeShape'] = (params) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = params;
+const PieChartShape: PieProps['shape'] = (params) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, isActive } = params;
 
-  // render arc around active segment
   return (
     <g>
       <Sector
@@ -247,15 +231,18 @@ const RenderActiveLabel: PieProps['activeShape'] = (params) => {
         outerRadius={outerRadius}
         fill={fill}
       />
-      <Sector
-        cx={cx}
-        cy={cy}
-        startAngle={startAngle}
-        endAngle={endAngle}
-        innerRadius={outerRadius + 6}
-        outerRadius={outerRadius + 10}
-        fill={fill}
-      />
+      {isActive ? (
+        // render arc around active segment
+        <Sector
+          cx={cx}
+          cy={cy}
+          startAngle={startAngle}
+          endAngle={endAngle}
+          innerRadius={outerRadius + 6}
+          outerRadius={outerRadius + 10}
+          fill={fill}
+        />
+      ) : null}
     </g>
   );
 };
