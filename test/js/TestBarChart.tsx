@@ -8,12 +8,12 @@ const TestBarChart = () => {
   const [sizeStateResponsive, setSizeStateResponsive] = useState({ width: 500, height: 500 });
   const [sizeStateFixed, setSizeStateFixed] = useState({ width: 960, height: 600 });
   return (
-    <Space direction="vertical" size={12}>
+    <Space orientation="vertical" size={12}>
       <Space>
         <Switch value={showBarCounts} onChange={(v) => setShowBarCounts(v)} />
         <span>Show Bar Counts</span>
       </Space>
-      <Space direction="vertical" size={150}>
+      <Space orientation="vertical" size={150}>
         <ResizableCard title="Fixed Bar Chart" sizeState={sizeStateFixed} onSizeChange={setSizeStateFixed}>
           <BarChart
             data={[
