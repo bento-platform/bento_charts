@@ -11,7 +11,7 @@ const ResizableCard = ({ title, sizeState, onSizeChange, children }: ResizableCa
   };
 
   return (
-    <Space direction="vertical">
+    <Space orientation="vertical">
       <Flex vertical={true} style={{ width: 500 }}>
         <Flex align="center">
           <label style={{ width: 60 }}>Width:</label>
