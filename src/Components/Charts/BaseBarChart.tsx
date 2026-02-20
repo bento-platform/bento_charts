@@ -141,10 +141,6 @@ const BaseBarChart = ({
               onClick={onClick}
               onMouseEnter={onHover}
               maxBarSize={70}
-              // background={(props) => {
-              //   console.log(props);
-              //   return <rect x={props.x} y={props.y} width={props.width} height={props.height} fill="#DDDDDD" />;
-              // }}
               label={showBarCounts ? BarLabel : undefined}
             >
               {data.map((entry, index) => (
@@ -171,8 +167,11 @@ const BarTooltip = ({
     return null;
   }
 
-  const name = (payload && payload[0]?.payload?.x) || '';
-  const value = (payload && payload[0]?.value) || 0;
+  const y = (payload ?? []).find((v) => v.name === 'y');
+  // const yDelta = (payload ?? []).find((v) => v.name === 'yDelta');
+
+  const name = y?.payload?.x || '';
+  const value = y?.value || 0;
   const percentage = totalCount ? Math.round((value / totalCount) * 100) : 0;
 
   return (
