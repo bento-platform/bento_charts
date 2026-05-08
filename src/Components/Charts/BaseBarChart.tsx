@@ -6,7 +6,6 @@ import {
   CartesianGrid,
   Cell,
   Label,
-  type LabelProps,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -24,7 +23,13 @@ import {
   COUNT_KEY,
 } from '../../constants/chartConstants';
 
-import { BarCountFillMode, BaseBarChartProps, CategoricalChartDataItem, TooltipPayload } from '../../types/chartTypes';
+import {
+  BarCountFillMode,
+  BaseBarChartProps,
+  CategoricalChartDataItem,
+  CustomBarLabelProps,
+  TooltipPayload,
+} from '../../types/chartTypes';
 import { useChartTranslation } from '../../ChartConfigProvider';
 import NoData from '../NoData';
 import { useTransformedChartData } from '../../util/chartUtils';
@@ -89,6 +94,9 @@ const BaseBarChart = ({
     return <NoData height={height} />;
   }
 
+  // string length of widest label
+  const valuesMaxStringLength = Math.max(...data.map((d) => (d.y ?? 0).toString().length));
+
   // Regarding XAxis.ticks below:
   //  The weird conditional is added from https://github.com/recharts/recharts/issues/2593#issuecomment-1311678397
   //  Basically, if data is empty, Recharts will default to a domain of [0, "auto"] and our tickFormatter trips up
@@ -124,7 +132,7 @@ const BaseBarChart = ({
               onClick={onClick}
               onMouseEnter={onHover}
               maxBarSize={70}
-              label={showBarCounts ? BarLabel : undefined}
+              label={showBarCounts ? <BarLabel valuesMaxStringLength={valuesMaxStringLength} /> : undefined}
             >
               {data.map((entry, index) => (
                 <Cell key={entry.x} fill={fill(entry, index)} />
@@ -169,7 +177,7 @@ const BarLabelContext = createContext<{ barCountFillMode: BarCountFillMode }>({ 
 /**
  * Component for rendering bar counts directly above bars in the plot.
  */
-const BarLabel = ({ x, y, width, value, fill }: LabelProps) => {
+const BarLabel = ({ x, y, width, value, fill, valuesMaxStringLength }: CustomBarLabelProps) => {
   const { barCountFillMode } = useContext(BarLabelContext);
 
   // Funky conversion to placate TypeScript. In reality, width should always be a number here, the Recharts types are
@@ -177,9 +185,9 @@ const BarLabel = ({ x, y, width, value, fill }: LabelProps) => {
   // noinspection SuspiciousTypeOfGuard
   const finalWidth = typeof width === 'string' ? MIN_BAR_WIDTH_FOR_COUNTS : (width ?? 0);
 
-  // Flip the labels to vertical text when the bar width is (roughly) less than the text width
+  // Flip the labels to vertical text when the bar width is (roughly) less than the width of widest count
   // noinspection SuspiciousTypeOfGuard
-  const vertical = finalWidth < (value ?? '').toString().length * BAR_LABEL_APPROX_NUMBER_WIDTH;
+  const vertical = finalWidth < valuesMaxStringLength * BAR_LABEL_APPROX_NUMBER_WIDTH;
   // noinspection SuspiciousTypeOfGuard
   const xPos = typeof x === 'number' ? x + finalWidth / 2 : x;
 
