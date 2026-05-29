@@ -18,7 +18,7 @@ const TestBarChart = () => {
           <BarChart
             data={[
               { id: '0', x: 'AB', y: 50 },
-              { id: '1', x: 'NB', y: 75 },
+              { id: '1', x: 'NB', y: 101 },
               { id: '2', x: 'SB', y: 60 },
               { id: '3', x: 'AU', y: 30 },
               { id: '4', x: 'XA', y: 80 },
@@ -49,7 +49,7 @@ const TestBarChart = () => {
           <BarChart
             data={[
               { id: '0', x: 'AB', y: 50 },
-              { id: '1', x: 'NB', y: 75 },
+              { id: '1', x: 'NB', y: 101 },
               { id: '2', x: 'SB', y: 60 },
               { id: '3', x: 'AU', y: 30 },
               {

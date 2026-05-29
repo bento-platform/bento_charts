@@ -1,4 +1,4 @@
-import type { PieProps, BarProps } from 'recharts';
+import type { PieProps, BarProps, LabelProps } from 'recharts';
 import type { CartesianChartProps } from 'recharts/types/util/types';
 import { COUNT_KEY, OTHER_KEY } from '../constants/chartConstants';
 
@@ -97,4 +97,8 @@ export interface BarChartProps extends Omit<BaseBarChartProps, 'chartFill' | 'ot
 }
 export interface HistogramProps extends Omit<BaseBarChartProps, 'chartFill' | 'otherFill'> {
   colorTheme?: keyof ChartTheme['bar'];
+}
+
+export interface CustomBarLabelProps extends LabelProps {
+  valuesMaxStringLength: number;
 }
