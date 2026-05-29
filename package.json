@@ -1,6 +1,6 @@
 {
   "name": "bento-charts",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Charts library for Bento-platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -45,7 +45,12 @@
         }
       ],
       "@semantic-release/release-notes-generator",
-      ["@semantic-release/npm", { "provenance": true }],
+      [
+        "@semantic-release/npm",
+        {
+          "provenance": true
+        }
+      ],
       "@semantic-release/github",
       "@semantic-release/git"
     ]
