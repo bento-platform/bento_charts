@@ -136,11 +136,10 @@ export const COUNT_TEXT_STYLE: CSS.Properties = {
   fontSize: '10px',
   fill: '#999',
 };
-export const COUNT_TEXT_STYLE_CENTER: CSS.Properties = {
-  fontSize: '20px',
-  fontWeight: 'bold',
-  fill: '#333',
-};
+
+// category donut / bar list (compact, non-Recharts widgets)
+export const CATEGORY_FALLBACK_FILL: HexColor = '#8C8C8C';
+export const CATEGORY_TRACK_FILL: HexColor = '#EEEEEE';
 
 // ################### CHART CONSTANTS ###################
 // bar chart

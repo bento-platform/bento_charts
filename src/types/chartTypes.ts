@@ -8,7 +8,6 @@ export interface CategoricalChartDataItem {
   x: string;
   y: number;
   id?: string;
-  selected?: boolean;
 }
 
 export type TooltipPayload = TooltipPayloadItem[];
@@ -72,27 +71,17 @@ export interface BaseChartComponentProps {
 
 export interface BaseCategoricalChartProps extends BaseChartComponentProps, CategoricalChartDataWithTransforms {}
 
-// Shared by Pie and Bar charts: lets a consumer pin a stable colour to a data item by id/x,
-// bypassing the theme's index-based colour cycling. Needed when category identity (not position)
-// must map to a fixed colour, e.g., status "Ongoing" is always green regardless of sort order.
-export interface SelectableCategoricalChartProps {
-  colorsById?: Record<string, HexColor>;
-  selectedIds?: string[];
-  showLegend?: boolean;
-}
-
-export interface PieChartProps extends BaseCategoricalChartProps, SelectableCategoricalChartProps {
+export interface PieChartProps extends BaseCategoricalChartProps {
   colorTheme?: keyof ChartTheme['pie'];
   sort?: boolean;
   onClick?: PieProps['onClick'];
   chartThreshold?: number;
   maxLabelChars?: number;
-  centerLabel?: string;
 }
 
 export type BarCountFillMode = 'match' | 'neutral';
 
-export interface BaseBarChartProps extends BaseCategoricalChartProps, SelectableCategoricalChartProps {
+export interface BaseBarChartProps extends BaseCategoricalChartProps {
   chartFill: HexColor[];
   otherFill: HexColor;
   title?: string;
