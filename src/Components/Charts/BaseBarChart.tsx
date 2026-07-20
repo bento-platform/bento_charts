@@ -34,6 +34,10 @@ import { useChartTranslation } from '../../ChartConfigProvider';
 import NoData from '../NoData';
 import { useTransformedChartData } from '../../util/chartUtils';
 import ChartWrapper from './ChartWrapper';
+import ChartLegend from './ChartLegend';
+
+const SELECTED_FILL_OPACITY = 1;
+const UNSELECTED_FILL_OPACITY = 0.35;
 
 const tickFormatter = (tickLabel: string) => {
   if (tickLabel.length <= MAX_TICK_LABEL_CHARS) {
@@ -60,6 +64,9 @@ const BaseBarChart = ({
   otherFill,
   showBarCounts,
   barCountFillMode,
+  colorsById,
+  selectedIds,
+  showLegend,
   ...params
 }: BaseBarChartProps) => {
   showBarCounts = showBarCounts ?? true; // Show bar counts by default
@@ -75,12 +82,33 @@ const BaseBarChart = ({
     [showBarCounts]
   );
 
-  const fill = (entry: CategoricalChartDataItem, index: number) =>
-    entry.x === 'missing' ? otherFill : chartFill[index % chartFill.length];
+  const fill = (entry: CategoricalChartDataItem, index: number) => {
+    const byId = colorsById?.[entry.id ?? entry.x];
+    if (byId) return byId;
+    return entry.x === 'missing' ? otherFill : chartFill[index % chartFill.length];
+  };
 
-  const data = useTransformedChartData(params, true);
+  const untransformedData = useTransformedChartData(params, true);
+  const data = useMemo(
+    () =>
+      untransformedData.map((e) => ({
+        ...e,
+        selected: selectedIds ? selectedIds.includes(e.id ?? e.x) : e.selected,
+      })),
+    [untransformedData, selectedIds]
+  );
 
   const totalCount = data.reduce((sum, e) => sum + e.y, 0);
+
+  const onLegendClick = useCallback(
+    (id: string) => {
+      const entry = data.find((e) => (e.id ?? e.x) === id);
+      // Legend clicks don't originate from a Recharts pointer event, so we can only pass through the
+      // data entry — onClick consumers should key off `entry.id`/`entry.x`, not the (unused) 2nd/3rd args.
+      if (onClick && entry) (onClick as unknown as (entry: (typeof data)[number]) => void)(entry);
+    },
+    [data, onClick]
+  );
 
   const onHover: BarProps['onMouseEnter'] = useCallback(
     (_data, _index, e) => {
@@ -135,11 +163,33 @@ const BaseBarChart = ({
               label={showBarCounts ? <BarLabel valuesMaxStringLength={valuesMaxStringLength} /> : undefined}
             >
               {data.map((entry, index) => (
-                <Cell key={entry.x} fill={fill(entry, index)} />
+                <Cell
+                  key={entry.x}
+                  fill={fill(entry, index)}
+                  fillOpacity={
+                    selectedIds && selectedIds.length > 0
+                      ? entry.selected
+                        ? SELECTED_FILL_OPACITY
+                        : UNSELECTED_FILL_OPACITY
+                      : SELECTED_FILL_OPACITY
+                  }
+                />
               ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+        {showLegend && (
+          <ChartLegend
+            entries={data.map((e, index) => ({
+              id: e.id ?? e.x,
+              name: e.x,
+              value: e.y,
+              fill: fill(e, index),
+              selected: e.selected,
+            }))}
+            onClick={onClick ? onLegendClick : undefined}
+          />
+        )}
       </ChartWrapper>
     </BarLabelContext.Provider>
   );

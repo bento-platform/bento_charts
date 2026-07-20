@@ -136,6 +136,11 @@ export const COUNT_TEXT_STYLE: CSS.Properties = {
   fontSize: '10px',
   fill: '#999',
 };
+export const COUNT_TEXT_STYLE_CENTER: CSS.Properties = {
+  fontSize: '20px',
+  fontWeight: 'bold',
+  fill: '#333',
+};
 
 // ################### CHART CONSTANTS ###################
 // bar chart

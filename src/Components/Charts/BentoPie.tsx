@@ -21,6 +21,7 @@ import {
   RADIAN,
   LABEL_THRESHOLD,
   COUNT_TEXT_STYLE,
+  COUNT_TEXT_STYLE_CENTER,
   TEXT_STYLE,
   OTHER_KEY,
 } from '../../constants/chartConstants';
@@ -34,6 +35,10 @@ import {
 import { polarToCartesian, useTransformedChartData } from '../../util/chartUtils';
 import NoData from '../NoData';
 import ChartWrapper from './ChartWrapper';
+import ChartLegend from './ChartLegend';
+
+const SELECTED_FILL_OPACITY = 1;
+const UNSELECTED_FILL_OPACITY = 0.35;
 
 const labelShortName = (name: string, maxChars: number) => {
   if (name.length <= maxChars) {
@@ -43,11 +48,20 @@ const labelShortName = (name: string, maxChars: number) => {
   return `${name.substring(0, maxChars - 3)}\u2026`;
 };
 
-const _entryFill = (entry: { name: string }, index: number, theme: string[]) =>
+const _entryFill = (entry: { name: string; id?: string }, index: number, theme: string[]) =>
   entry.name.toLowerCase() === 'missing' ? CHART_MISSING_FILL : theme[index % theme.length];
 
 // Prevents the last segment from having the same fill as the first segment (unless "missing") to ensure visual distinction.
-const getPieSegmentFill = (entry: { name: string }, index: number, data: Array<{ name: string }>, theme: string[]) => {
+const getPieSegmentFill = (
+  entry: { name: string; id?: string },
+  index: number,
+  data: Array<{ name: string; id?: string }>,
+  theme: string[],
+  colorsById?: Record<string, string>
+) => {
+  const byId = colorsById?.[entry.id ?? entry.name];
+  if (byId) return byId;
+
   let fill = _entryFill(entry, index, theme);
   if (index === data.length - 1 && entry.name.toLowerCase() !== 'missing') {
     const firstEntry = data[0];
@@ -67,6 +81,10 @@ const BentoPie = ({
   colorTheme = 'default',
   chartThreshold,
   maxLabelChars,
+  colorsById,
+  selectedIds,
+  showLegend,
+  centerLabel,
   ...params
 }: PieChartProps) => {
   const t = useChartTranslation();
@@ -100,10 +118,15 @@ const BentoPie = ({
     }
 
     return {
-      data: data.map((e) => ({ name: e.x, value: e.y, ...e })),
+      data: data.map((e) => ({
+        name: e.x,
+        value: e.y,
+        ...e,
+        selected: selectedIds ? selectedIds.includes(e.id ?? e.x) : e.selected,
+      })),
       sum,
     };
-  }, [t, transformedData, resolvedChartThreshold]);
+  }, [t, transformedData, resolvedChartThreshold, selectedIds]);
 
   // ##################### Rendering #####################
   const onHover: PieProps['onMouseOver'] = useCallback(
@@ -112,6 +135,16 @@ const BentoPie = ({
       if (onClick && target && data.name !== t[OTHER_KEY]) (target as SVGElement).style.cursor = 'pointer';
     },
     [t, onClick]
+  );
+
+  const onLegendClick = useCallback(
+    (id: string) => {
+      const entry = data.find((e) => (e.id ?? e.name) === id);
+      // Legend clicks don't originate from a Recharts pointer event, so we can only pass through the
+      // data entry — onClick consumers should key off `entry.id`/`entry.name`, not the (unused) 2nd/3rd args.
+      if (onClick && entry) (onClick as unknown as (entry: (typeof data)[number]) => void)(entry);
+    },
+    [data, onClick]
   );
 
   if (data.length === 0) {
@@ -137,12 +170,44 @@ const BentoPie = ({
             onClick={onClick}
           >
             {data.map((entry, index) => (
-              <Cell key={index} fill={getPieSegmentFill(entry, index, data, theme)} />
+              <Cell
+                key={index}
+                fill={getPieSegmentFill(entry, index, data, theme, colorsById)}
+                fillOpacity={
+                  selectedIds && selectedIds.length > 0
+                    ? entry.selected
+                      ? SELECTED_FILL_OPACITY
+                      : UNSELECTED_FILL_OPACITY
+                    : SELECTED_FILL_OPACITY
+                }
+              />
             ))}
+            {centerLabel !== undefined && (
+              <>
+                <text x="50%" y="47%" textAnchor="middle" dominantBaseline="middle" style={COUNT_TEXT_STYLE_CENTER}>
+                  {sum}
+                </text>
+                <text x="50%" y="58%" textAnchor="middle" dominantBaseline="middle" style={TEXT_STYLE}>
+                  {centerLabel}
+                </text>
+              </>
+            )}
           </Pie>
           <Tooltip {...TOOLTIP_OTHER_PROPS} content={<CustomTooltip totalCount={sum} />} isAnimationActive={false} />
         </PieChart>
       </ResponsiveContainer>
+      {showLegend && (
+        <ChartLegend
+          entries={data.map((e, index) => ({
+            id: e.id ?? e.name,
+            name: e.name,
+            value: e.value,
+            fill: getPieSegmentFill(e, index, data, theme, colorsById),
+            selected: e.selected,
+          }))}
+          onClick={onClick ? onLegendClick : undefined}
+        />
+      )}
     </ChartWrapper>
   );
 };

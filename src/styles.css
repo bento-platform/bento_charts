@@ -46,3 +46,43 @@
 .bento-charts--map--legend--values > span:first-of-type {
   flex: 1;
 }
+
+.bento-charts--legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bento-charts--legend--row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.bento-charts--legend--row-clickable {
+  cursor: pointer;
+}
+
+.bento-charts--legend--row-selected {
+  font-weight: bold;
+}
+
+.bento-charts--legend--patch {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.bento-charts--legend--label {
+  flex: 1;
+}
+
+.bento-charts--legend--value {
+  color: #999;
+}
