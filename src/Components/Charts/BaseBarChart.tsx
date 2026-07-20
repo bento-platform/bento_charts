@@ -103,9 +103,10 @@ const BaseBarChart = ({
   const onLegendClick = useCallback(
     (id: string) => {
       const entry = data.find((e) => (e.id ?? e.x) === id);
-      // Legend clicks don't originate from a Recharts pointer event, so we can only pass through the
-      // data entry — onClick consumers should key off `entry.id`/`entry.x`, not the (unused) 2nd/3rd args.
-      if (onClick && entry) (onClick as unknown as (entry: (typeof data)[number]) => void)(entry);
+      // Legend clicks don't originate from a Recharts pointer event, so the 2nd/3rd (index/event) args
+      // aren't available. The data entry is nested under `.payload` to match the shape Recharts itself
+      // passes to onClick for real bar clicks, so consumers can use one accessor for both triggers.
+      if (onClick && entry) (onClick as unknown as (data: { payload: typeof entry }) => void)({ payload: entry });
     },
     [data, onClick]
   );
