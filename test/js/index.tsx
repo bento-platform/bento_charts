@@ -14,6 +14,8 @@ import TestHistogram from './TestHistogram';
 import TestChoroplethMap from './TestChoroplethMap';
 import TestPieChart from './TestPieChart';
 import TestPointMap from './TestPointMap';
+import TestCategoryDonut from './TestCategoryDonut';
+import TestCategoryBarList from './TestCategoryBarList';
 
 const items: TabsProps['items'] = [
   {
@@ -30,6 +32,16 @@ const items: TabsProps['items'] = [
     key: 'pie',
     label: 'Chart: Pie',
     children: <TestPieChart />,
+  },
+  {
+    key: 'category-donut',
+    label: 'Chart: Category Donut',
+    children: <TestCategoryDonut />,
+  },
+  {
+    key: 'category-bar-list',
+    label: 'Chart: Category Bar List',
+    children: <TestCategoryBarList />,
   },
   {
     key: 'choropleth',
