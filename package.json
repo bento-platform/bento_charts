@@ -13,7 +13,7 @@
     "format": "npx prettier --write 'src/**/*.{js,ts,tsx}'",
     "buildpack": "rm ./packs/*.tgz && tsc && npm pack --pack-destination ./packs",
     "test": "npx webpack-dev-server",
-    "prepare": "husky"
+    "prepare": "npm run build && (husky || true)"
   },
   "release": {
     "branches": [
