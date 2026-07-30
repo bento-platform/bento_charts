@@ -58,11 +58,11 @@ const BaseBarChart = ({
   onChartClick,
   chartFill,
   otherFill,
-  showBarCounts,
+  showBarCounts: showBarCountsInit,
   barCountFillMode,
   ...params
 }: BaseBarChartProps) => {
-  showBarCounts = showBarCounts ?? true; // Show bar counts by default
+  const showBarCounts = showBarCountsInit ?? true; // Show bar counts by default
 
   const t = useChartTranslation();
 
