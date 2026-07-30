@@ -6,6 +6,10 @@ export { default as BarChart } from './Components/Charts/BentoBarChart';
 export { default as Histogram } from './Components/Charts/BentoHistogram';
 export { default as PieChart } from './Components/Charts/BentoPie';
 
+// Compact, non-Recharts category widgets (donut + ranked bar list with legend/selection built in)
+export { default as CategoryDonut } from './Components/Charts/CategoryDonut';
+export { default as CategoryBarList } from './Components/Charts/CategoryBarList';
+
 // Maps are not included in index.ts - instead, they need to be included from `bento-charts/maps`.
 // This way, we can have optional peer dependencies.
 
