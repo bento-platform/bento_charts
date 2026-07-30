@@ -53,8 +53,9 @@
 .bento-charts--category-donut { flex: none; }
 .bento-charts--category-donut-num { font-size: 18px; font-weight: 700; fill: rgba(0, 0, 0, 0.88); text-anchor: middle; }
 .bento-charts--category-donut-lbl {
-  font-size: 8px;
-  color: #999999;
+  font-size: 10px;
+  font-weight: 600;
+  color: #666666;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.05em;
