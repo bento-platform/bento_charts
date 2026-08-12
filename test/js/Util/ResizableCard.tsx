@@ -15,14 +15,14 @@ const ResizableCard = ({ title, sizeState, onSizeChange, children }: ResizableCa
       <Flex vertical={true} style={{ width: 500 }}>
         <Flex align="center">
           <label style={{ width: 60 }}>Width:</label>
-          <Slider min={50} max={800} onChange={onChangeWidth} value={sizeState.width + 50} style={{ flex: 1 }} />
+          <Slider min={50} max={800} onChange={onChangeWidth} value={sizeState.width} style={{ flex: 1 }} />
         </Flex>
         <Flex align="center">
           <label style={{ width: 60 }}>Height:</label>
-          <Slider min={50} max={800} onChange={onChangeHeight} value={sizeState.height + 50} style={{ flex: 1 }} />
+          <Slider min={50} max={800} onChange={onChangeHeight} value={sizeState.height} style={{ flex: 1 }} />
         </Flex>
       </Flex>
-      <Card title={title} style={sizeState}>
+      <Card title={title} style={{ width: sizeState.width, height: sizeState.height + 48 + 56 }}>
         {children}
       </Card>
     </Space>
