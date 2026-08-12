@@ -110,7 +110,7 @@ const BaseBarChart = ({
           <BarChart data={data} margin={margins} onClick={onChartClick}>
             <XAxis
               dataKey="x"
-              height={20}
+              height="auto"
               angle={-45}
               ticks={data.length ? undefined : ['']}
               tickFormatter={tickFormatter}
