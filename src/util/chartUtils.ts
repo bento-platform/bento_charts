@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { RADIAN } from '../constants/chartConstants';
-import type { CategoricalChartDataWithTransforms } from '../types/chartTypes';
+import type { CategoricalChartDataType, CategoricalChartDataWithTransforms } from '../types/chartTypes';
 
 export const polarToCartesian = (cx: number, cy: number, radius: number, angle: number) => {
   return {
@@ -9,18 +9,33 @@ export const polarToCartesian = (cx: number, cy: number, radius: number, angle: 
   };
 };
 
-export const useTransformedChartData = (
-  {
-    data: originalData,
-    preFilter,
-    dataMap,
-    postFilter,
-    removeEmpty: origRemoveEmpty,
-  }: CategoricalChartDataWithTransforms,
+export function useTransformedChartData(
+  originalData: CategoricalChartDataType,
+  dwt: CategoricalChartDataWithTransforms,
+  defaultRemoveEmpty?: boolean,
+  sortY?: boolean
+): CategoricalChartDataType;
+export function useTransformedChartData(
+  originalData: undefined,
+  dwt: CategoricalChartDataWithTransforms,
+  defaultRemoveEmpty?: boolean,
+  sortY?: boolean
+): undefined;
+export function useTransformedChartData(
+  originalData: CategoricalChartDataType | undefined,
+  dwt: CategoricalChartDataWithTransforms,
+  defaultRemoveEmpty?: boolean,
+  sortY?: boolean
+): CategoricalChartDataType | undefined;
+export function useTransformedChartData(
+  originalData: CategoricalChartDataType | undefined,
+  { preFilter, dataMap, postFilter, removeEmpty: origRemoveEmpty }: CategoricalChartDataWithTransforms,
   defaultRemoveEmpty = true,
   sortY = false
-) =>
-  useMemo(() => {
+) {
+  return useMemo(() => {
+    if (originalData === undefined) return undefined;
+
     const removeEmpty = origRemoveEmpty ?? defaultRemoveEmpty;
 
     let data = [...originalData];
@@ -35,3 +50,4 @@ export const useTransformedChartData = (
 
     return data;
   }, [dataMap, defaultRemoveEmpty, originalData, origRemoveEmpty, preFilter, postFilter, sortY]);
+}

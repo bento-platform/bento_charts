@@ -55,6 +55,7 @@ export type TranslationObject = {
 
 export interface CategoricalChartDataWithTransforms {
   data: CategoricalChartDataType;
+  dataContext?: CategoricalChartDataType; // Optional: data context for a chart displaying subsetted data.
   preFilter?: ChartFilterCallback;
   dataMap?: ChartDataMapCallback;
   postFilter?: ChartFilterCallback;

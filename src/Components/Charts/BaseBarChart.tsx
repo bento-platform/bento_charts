@@ -78,7 +78,7 @@ const BaseBarChart = ({
   const fill = (entry: CategoricalChartDataItem, index: number) =>
     entry.x === 'missing' ? otherFill : chartFill[index % chartFill.length];
 
-  const data = useTransformedChartData(params, true);
+  const data = useTransformedChartData(params.data, params, true);
 
   const totalCount = data.reduce((sum, e) => sum + e.y, 0);
 
