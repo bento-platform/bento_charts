@@ -46,7 +46,7 @@ const TestChoroplethMap = () => {
         height={600}
         center={[74.0694163, -112.7217838]}
         zoom={2.75}
-        renderPopupBody={(_f, d) => <>{d?.toFixed(0)} samples</>}
+        renderPopupBody={(_f, d) => <>{(d ?? 0).toFixed(0)} samples</>}
       />
     </>
   );
