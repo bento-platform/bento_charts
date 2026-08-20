@@ -80,7 +80,7 @@ const BentoPie = ({
 
   // ##################### Data processing #####################
 
-  const transformedData = useTransformedChartData(params, true, sort);
+  const transformedData = useTransformedChartData(params.data, params, true, sort);
   const { data, sum } = useMemo(() => {
     let data = [...transformedData];
 

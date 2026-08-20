@@ -32,12 +32,22 @@ const BentoChoroplethMap = ({
   renderPopupBody,
   ...params
 }: ChoroplethMapProps) => {
-  const data = useTransformedChartData(params);
+  const data = useTransformedChartData(params.data, params);
+  const dataContext = useTransformedChartData(params.dataContext, params);
 
+  const [lastDataByFeatureCat, setLastDataByFeatureCat] = useState<{ [k: string]: number } | null>(null);
   const dataByFeatureCat = useMemo(() => Object.fromEntries(data.map((d) => [d.x, d.y])), [data]);
 
-  const minYVal = useMemo(() => Math.min(...data.map((d) => d.y)), [data]);
-  const maxYVal = useMemo(() => Math.max(...data.map((d) => d.y)), [data]);
+  const [dataId, setDataId] = useState(0);
+
+  if (dataByFeatureCat !== lastDataByFeatureCat) {
+    setDataId((d) => d + 1);
+    setLastDataByFeatureCat(dataByFeatureCat);
+  }
+
+  // Allow for filtering all the way to 0 while maintaining the colour scale. This could be configurable in the future.
+  const minYVal = 0;
+  const maxYVal = useMemo(() => Math.max(...(dataContext ?? data).map((d) => d.y)), [data, dataContext]);
 
   const calculateColor = useCallback(
     (v: number | undefined): string =>
@@ -109,7 +119,8 @@ const BentoChoroplethMap = ({
 
   return (
     <BentoMapContainer height={height} center={center} zoom={zoom} tileLayer={tileLayer}>
-      <GeoJSON ref={geoJsonLayer} data={features} style={shapeStyle} eventHandlers={eventHandlers}>
+      {/* Changing dataId forces GeoJSON layer to re-render */}
+      <GeoJSON ref={geoJsonLayer} key={dataId} data={features} style={shapeStyle} eventHandlers={eventHandlers}>
         <Popup>{popupContents}</Popup>
       </GeoJSON>
       {colorMode.mode === 'continuous' ? (
