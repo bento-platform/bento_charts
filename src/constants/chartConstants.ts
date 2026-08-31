@@ -144,8 +144,8 @@ export const CATEGORY_TRACK_FILL: HexColor = '#EEEEEE';
 // ################### CHART CONSTANTS ###################
 // bar chart
 export const MAX_TICK_LABEL_CHARS = 15;
-export const UNITS_LABEL_OFFSET = -75;
-export const TICKS_SHOW_ALL_LABELS_BELOW = 11; // Below this # of X-axis ticks, force-show all labels
+export const UNITS_LABEL_OFFSET = -15;
+export const TICKS_SHOW_ALL_LABELS_BELOW = 12; // Below this # of X-axis ticks, force-show all labels
 export const TICK_MARGIN = 5; // vertical spacing between tick line and tick label
 
 // pie chart
