@@ -42,7 +42,7 @@ const tickFormatter = (tickLabel: string) => {
   return `${tickLabel.substring(0, MAX_TICK_LABEL_CHARS)}...`;
 };
 
-const BAR_CHART_MARGINS = { right: 0 };
+const BAR_CHART_MARGINS = { right: 0, bottom: -1 * UNITS_LABEL_OFFSET + 5 };
 const BAR_CHART_MARGIN_TOP_COUNTS = 35;
 const BAR_CHART_MARGIN_TOP_NO_COUNTS = 10;
 const MIN_BAR_WIDTH_FOR_COUNTS = 11;
