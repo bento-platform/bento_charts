@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import { MapContainer } from 'react-leaflet';
 import L, { Point } from 'leaflet';
 
 import BentoOSMTileLayer from './BentoOSMTileLayer';
+import SafeMapContainer from './SafeMapContainer';
 import type { BaseMapProps } from '../../types/mapTypes';
 
 import iconPng from 'leaflet/dist/images/marker-icon.png';
@@ -25,10 +25,10 @@ interface MapContainerProps extends BaseMapProps {
 }
 
 const BentoMapContainer = ({ height, center, zoom, children, tileLayer }: MapContainerProps) => (
-  <MapContainer style={{ height }} center={center} zoom={zoom}>
+  <SafeMapContainer style={{ height }} center={center} zoom={zoom}>
     {tileLayer ?? <BentoOSMTileLayer />}
     {children}
-  </MapContainer>
+  </SafeMapContainer>
 );
 
 export default BentoMapContainer;
