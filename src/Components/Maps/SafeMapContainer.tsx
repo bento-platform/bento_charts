@@ -9,12 +9,13 @@ interface SafeMapContainerProps {
   children?: ReactNode;
 }
 
-// react-leaflet's own MapContainer guards map creation with a useCallback(fn, [])-frozen
-// `context === null` check, which React 18 Strict Mode's double-invoked ref callback defeats:
-// the second invocation still sees the first render's stale `null` closure and constructs a
-// second Leaflet map on the same DOM node, which throws. A plain effect doesn't have this
-// problem, since Strict Mode runs its cleanup (map.remove()) before invoking the effect again.
-// See https://github.com/PaulLeCam/react-leaflet/issues/1102
+// Works around react-leaflet 4.2.1's MapContainer double-initializing its Leaflet map under
+// Strict Mode (stale useCallback closure survives the double-invoked ref): see
+// https://github.com/PaulLeCam/react-leaflet/issues/1102. A plain effect avoids this since
+// Strict Mode's cleanup (map.remove()) runs before the effect re-fires.
+// TODO: drop this file, BentoMapContainer's use of it, and the explicit @react-leaflet/core
+// peerDependency once react-leaflet <5 support is dropped (planned alongside the React 18 -> 19
+// bump) — react-leaflet 5.0.0's MapContainer already fixes this with a ref-based guard.
 const SafeMapContainer = ({ style, center, zoom, children }: SafeMapContainerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [context, setContext] = useState<LeafletContextInterface | null>(null);
