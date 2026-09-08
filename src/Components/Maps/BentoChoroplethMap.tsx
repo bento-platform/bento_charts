@@ -10,6 +10,7 @@ import type {
   PathOptions,
 } from 'leaflet';
 
+import type { CategoricalChartDataType } from '../../types/chartTypes';
 import type { ChoroplethMapProps } from '../../types/mapTypes';
 
 import BentoMapContainer from './BentoMapContainer';
@@ -19,6 +20,9 @@ import { useTransformedChartData } from '../../util/chartUtils';
 
 const DEFAULT_CATEGORY = '';
 const POS_BOTTOM_RIGHT: ControlPosition = 'bottomright';
+
+const dataByIdOrX = (data?: CategoricalChartDataType) =>
+  Object.fromEntries((data ?? []).map((d) => [d.id ?? d.x, d.y]));
 
 const BentoChoroplethMap = ({
   height,
@@ -36,7 +40,8 @@ const BentoChoroplethMap = ({
   const dataContext = useTransformedChartData(params.dataContext, params);
 
   const [lastDataByFeatureCat, setLastDataByFeatureCat] = useState<{ [k: string]: number } | null>(null);
-  const dataByFeatureCat = useMemo(() => Object.fromEntries(data.map((d) => [d.x, d.y])), [data]);
+  const dataByFeatureCat = useMemo(() => dataByIdOrX(data), [data]);
+  const dataContextByFeatureCat = useMemo(() => dataByIdOrX(dataContext), [dataContext]);
 
   const [dataId, setDataId] = useState(0);
 
@@ -100,12 +105,18 @@ const BentoChoroplethMap = ({
                   <span>{title}</span>
                 )}
               </h4>
-              {renderPopupBody ? renderPopupBody(feature, dataByFeatureCat[fProps[categoryProp]]) : null}
+              {renderPopupBody
+                ? renderPopupBody(
+                    feature,
+                    dataByFeatureCat[fProps[categoryProp]],
+                    dataContextByFeatureCat[fProps[categoryProp]]
+                  )
+                : null}
             </div>
           );
         },
       }) as LeafletEventHandlerFnMap,
-    [onClick, categoryProp, dataByFeatureCat, renderPopupBody]
+    [onClick, categoryProp, dataByFeatureCat, dataContextByFeatureCat, renderPopupBody]
   );
 
   const geoJsonLayer: Ref<LeafletGeoJSON> = useRef(null);
