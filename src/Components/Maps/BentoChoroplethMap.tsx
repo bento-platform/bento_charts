@@ -47,7 +47,7 @@ const BentoChoroplethMap = ({
 
   // Allow for filtering all the way to 0 while maintaining the colour scale. This could be configurable in the future.
   const minYVal = 0;
-  const maxYVal = useMemo(() => Math.max(...(dataContext ?? data).map((d) => d.y)), [data, dataContext]);
+  const maxYVal = useMemo(() => Math.max(...[...(dataContext ?? []), ...data].map((d) => d.y)), [data, dataContext]);
 
   const calculateColor = useCallback(
     (v: number | undefined): string =>
