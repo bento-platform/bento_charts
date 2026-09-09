@@ -3,9 +3,10 @@ import {
   Bar,
   BarChart,
   type BarProps,
+  BarShapeProps,
   CartesianGrid,
-  Cell,
   Label,
+  Rectangle,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -97,6 +98,8 @@ const BaseBarChart = ({
   // string length of widest label
   const valuesMaxStringLength = Math.max(...data.map((d) => (d.y ?? 0).toString().length));
 
+  const BarRectangle = (props: BarShapeProps) => <Rectangle {...props} fill={fill(props.payload, props.index)} />;
+
   // Regarding XAxis.ticks below:
   //  The weird conditional is added from https://github.com/recharts/recharts/issues/2593#issuecomment-1311678397
   //  Basically, if data is empty, Recharts will default to a domain of [0, "auto"] and our tickFormatter trips up
@@ -133,11 +136,8 @@ const BaseBarChart = ({
               onMouseEnter={onHover}
               maxBarSize={70}
               label={showBarCounts ? <BarLabel valuesMaxStringLength={valuesMaxStringLength} /> : undefined}
-            >
-              {data.map((entry, index) => (
-                <Cell key={entry.x} fill={fill(entry, index)} />
-              ))}
-            </Bar>
+              shape={BarRectangle}
+            />
           </BarChart>
         </ResponsiveContainer>
       </ChartWrapper>

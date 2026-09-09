@@ -2,12 +2,12 @@ import { useCallback, useMemo } from 'react';
 import {
   PieChart,
   Pie,
-  Cell,
   Curve,
   Tooltip,
   Sector,
   PieProps,
   PieLabelRenderProps,
+  PieSectorShapeProps,
   ResponsiveContainer,
 } from 'recharts';
 import type CSS from 'csstype';
@@ -118,6 +118,10 @@ const BentoPie = ({
     return <NoData height={height} />;
   }
 
+  const PieSector = (props: PieSectorShapeProps) => (
+    <PieChartShape {...props} fill={getPieSegmentFill(props.payload, props.index, data, theme)} />
+  );
+
   return (
     <ChartWrapper responsive={typeof width !== 'number'}>
       <ResponsiveContainer width={width ?? '100%'} height={height}>
@@ -133,13 +137,9 @@ const BentoPie = ({
             labelLine={false}
             isAnimationActive={false}
             onMouseOver={onHover}
-            shape={PieChartShape}
+            shape={PieSector}
             onClick={onClick}
-          >
-            {data.map((entry, index) => (
-              <Cell key={index} fill={getPieSegmentFill(entry, index, data, theme)} />
-            ))}
-          </Pie>
+          />
           <Tooltip {...TOOLTIP_OTHER_PROPS} content={<CustomTooltip totalCount={sum} />} isAnimationActive={false} />
         </PieChart>
       </ResponsiveContainer>
@@ -217,7 +217,7 @@ const renderLabel = (resolvedMaxLabelChars: number): PieProps['label'] => {
   return BentoPieLabel;
 };
 
-const PieChartShape: PieProps['shape'] = (params) => {
+const PieChartShape = (params: PieSectorShapeProps) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, isActive } = params;
 
   return (
