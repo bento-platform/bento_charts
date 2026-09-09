@@ -48,5 +48,5 @@ export interface ChoroplethMapProps extends BaseCategoricalChartProps, BaseMapPr
   colorMode: ChoroplethMapColorModeContinuous | ChoroplethMapColorModeDiscrete;
   categoryProp: string;
   onClick?: GeoJSONShapeOnClick;
-  renderPopupBody?: (f: GeoJSONFeatureType, d: number | undefined) => ReactNode;
+  renderPopupBody?: (f: GeoJSONFeatureType, d?: number, dCtx?: number) => ReactNode;
 }
