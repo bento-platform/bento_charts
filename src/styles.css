@@ -78,7 +78,7 @@
 .bento-charts--category-bar-list { display: flex; flex-direction: column; gap: 8px; }
 .bento-charts--category-bar-list-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
 .bento-charts--category-bar-list-label {
-  width: 84px;
+  /* width of label is set in component */
   color: #666666;
   white-space: nowrap;
   overflow: hidden;
