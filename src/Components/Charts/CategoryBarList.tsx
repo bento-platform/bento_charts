@@ -9,6 +9,7 @@ export interface CategoryBarListProps {
   selectedIds?: string[];
   formatValue?: (value: number) => string;
   onClick?: (id: string) => void;
+  labelWidth?: number;
 }
 
 const CategoryBarList = ({
@@ -18,6 +19,7 @@ const CategoryBarList = ({
   selectedIds,
   formatValue = (v) => `${v}`,
   onClick,
+  labelWidth = 84,
 }: CategoryBarListProps) => {
   if (data.length === 0) return null;
 
@@ -36,7 +38,7 @@ const CategoryBarList = ({
             }${onClick ? ' bento-charts--category-bar-list-row-clickable' : ''}`}
             onClick={onClick ? () => onClick(id) : undefined}
           >
-            <span className="bento-charts--category-bar-list-label" title={entry.x}>
+            <span className="bento-charts--category-bar-list-label" title={entry.x} style={{ width: labelWidth }}>
               {entry.x}
             </span>
             <span className="bento-charts--category-bar-list-track">
