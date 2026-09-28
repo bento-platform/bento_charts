@@ -8,7 +8,7 @@ const DATA = [
   { id: 'b', x: 'Segment B', y: 60 },
   { id: 'c', x: 'Segment C', y: 70 },
   { id: 'd', x: 'Segment D', y: 80 },
-  { id: 'e', x: 'Segment E', y: 90 },
+  { id: 'e', x: 'Segment E very long name', y: 90 },
 ];
 
 const COLORS_BY_ID = DATA.reduce<Record<string, HexColor>>((acc, entry, i) => {

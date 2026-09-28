@@ -82,6 +82,7 @@
   color: #666666;
   white-space: nowrap;
   overflow: hidden;
+  text-align: right;
   text-overflow: ellipsis;
   flex: none;
 }
